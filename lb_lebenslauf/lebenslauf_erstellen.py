@@ -12,7 +12,7 @@ from openpyxl.drawing.image import Image
 
 # Funktion zur Herstellung der Verbindung
 def create_connection():
-    db_path = '/home/birgit/PycharmProjects/Projekt//lebenslauf.db' #Hinweis: Geben Sie den vollständigen, absoluten Pfad zur Datei an.
+    db_path = '/home/birgit/PycharmProjects/Projekt/lebenslauf.db' #Hinweis: Geben Sie den vollständigen, absoluten Pfad zur Datei an.
     conn = None
     try:
         conn = sqlite3.connect(db_path)
