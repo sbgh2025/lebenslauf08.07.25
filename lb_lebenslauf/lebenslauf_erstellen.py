@@ -1,13 +1,31 @@
+import sqlite3
 import os
 from datetime import datetime
 import tkinter as tk
+import sys
 from tkinter import ttk, messagebox
 from openpyxl import Workbook
 from openpyxl.styles import Font, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.drawing.image import Image
 
-from db_pfad import get_connection
+
+# Funktion zur Herstellung der Verbindung
+def create_connection():
+    db_path = '/home/birgit/PycharmProjects/Projekt//lebenslauf.db' #Hinweis: Geben Sie den vollständigen, absoluten Pfad zur Datei an.
+    conn = None
+    try:
+        conn = sqlite3.connect(db_path)
+        print("Verbindung zur Datenbank erfolgreich!")
+    except sqlite3.Error as e:
+        print(f"Fehler beim Verbinden mit der Datenbank: {e}")
+    return conn
+
+# Verbindung aufbauen
+conn = create_connection()
+cursor = conn.cursor()
+
+
 
 # Hilfsfunktionen
 def safe_value(val):
@@ -21,7 +39,7 @@ def is_valid_leihfirma(text):
 
 def get_bewerbungen():
     try:
-        conn = get_connection()
+        conn = create_connection()
         cur = conn.cursor()
         cur.execute("""
             SELECT b.bwg_id,
@@ -64,7 +82,7 @@ def auto_adjust_width(ws):
 
 def export_lebenslauf(bwg_id):
     try:
-        conn = get_connection()
+        conn = create_connection()
         cur = conn.cursor()
     except Exception as e:
         messagebox.showerror("Fehler", f"DB-Verbindung: {e}")
@@ -129,7 +147,7 @@ def export_lebenslauf(bwg_id):
         FROM tbl_bwg_ag bag
         JOIN tbl_arbeitgeber ag ON ag.ag_id = bag.bwg_ag_ag_id
         WHERE bag.bwg_ag_bwg_id = ?
-        ORDER BY ag.ag_datum_von DESC
+        ORDER BY ag.ag_datum_bis DESC
     """, (bwg_id,))
     for name, von, bis, zeit, funktion, leihfirma, ag_id in cur.fetchall():
         period = f"{format_datum(von)} – {format_datum(bis) if bis else 'heute'}"
