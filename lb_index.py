@@ -54,6 +54,13 @@ class IndexApp(tk.Tk):
             ("Bewerber ↔ Interessen", make_path("tbl_kombi/tbl_bwg_i.py")),
         ])
 
+
+        self.create_main_button("📝 Lebenslauf erstellen", [
+            ("Bewerbung", make_path("lb_lebenslauf/lebenslauf_erstellen.py")),
+
+        ])
+
+
     def create_main_button(self, title, buttons):
         main_button = tk.Button(
             self,
