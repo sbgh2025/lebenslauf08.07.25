@@ -1,16 +1,24 @@
 # tbl_arbeitgeber.py
+import sqlite3
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 import csv
 import sys
 import os
 
-# Datenbankmodul importieren
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../lb_datenbank")))
-from db_pfad import get_connection
+# Funktion zur Herstellung der Verbindung
+def create_connection():
+    db_path = os.getenv('DB_PATH', 'lebenslauf.db')  # absoluter Pfad zu 'lebenslauf.db'
+    conn = None
+    try:
+        conn = sqlite3.connect(db_path)
+        print("Verbindung zur Datenbank erfolgreich!")
+    except sqlite3.Error as e:
+        print(f"Fehler beim Verbinden mit der Datenbank: {e}")
+    return conn
 
-# Verbindung zur Datenbank
-conn = get_connection()
+# Verbindung aufbauen
+conn = create_connection()
 cursor = conn.cursor()
 
 # --- GUI SETUP ---
@@ -37,7 +45,7 @@ def reload_data():
         tree.insert("", "end", iid=row[0], values=(row[1],))
 
 def add_record():
-    name = entry_name.get().strip().lower()
+    name = entry_name.get().strip()
     if not name:
         messagebox.showwarning("Eingabefehler", "Bitte eine Interesse eingeben.")
         return
@@ -62,7 +70,7 @@ def update_record():
         return
 
     i_id = selected[0]
-    name = entry_name.get().strip().lower()
+    name = entry_name.get().strip()
     if not name:
         messagebox.showwarning("Eingabefehler", "Bitte eine Interesse eingeben.")
         return
@@ -122,7 +130,7 @@ def import_from_csv():
         rows_imported = 0
         for row in reader:
             if row:
-                name = row[0].strip().lower()
+                name = row[0].strip()
                 if name:
                     try:
                         cursor.execute("INSERT OR IGNORE INTO tbl_interessen (i_name) VALUES (?)", (name,))
